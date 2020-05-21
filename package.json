@@ -4,7 +4,9 @@
   "description": "backend api for agora",
   "main": "api.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+    
   },
   "author": "Gabriel Vlasceanu",
   "license": "MIT",
