@@ -17,7 +17,7 @@ exports.getThreads =(req,res) => {
 }
 
 exports.createThread = (req,res) => {
-    console.log(req)
+    console.log(req.body)
     if(!req.body.title) {
         return res.status(400).send({
             message: "Thread title can not be empty"
@@ -32,7 +32,7 @@ exports.createThread = (req,res) => {
 
     const thread = new Thread({
         _id: shortid.generate(),
-        forum: 'public',
+        forum: req.body.forum,
         title: req.body.title,
         deleteThread: req.body.deleteThread
     })
