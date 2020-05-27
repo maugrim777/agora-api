@@ -1,6 +1,6 @@
 const Thread = require('../models/thread.model')
 const shortid = require('shortid')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 
 
 exports.getThreads =(req,res) => {
