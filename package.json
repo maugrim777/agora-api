@@ -1,6 +1,9 @@
 {
   "name": "agora-api",
   "version": "1.0.0",
+  "engines": { 
+    "node": "12.15.0" 
+  },
   "description": "backend api for agora",
   "main": "api.js",
   "scripts": {
