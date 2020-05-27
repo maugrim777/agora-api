@@ -30,6 +30,10 @@ app.post('/newThread', Controller.createThread)
 
 app.get('/public/:thread', Controller.getOneThread)
 
+app.delete('/public/:thread/delete', Controller.deleteThread)
+
+app.post('/public/:thread/newPost', Controller.createPost)
+
 
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))

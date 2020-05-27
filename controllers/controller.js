@@ -1,5 +1,6 @@
 const Thread = require('../models/thread.model')
 const shortid = require('shortid')
+const bcrypt = require('bcrypt')
 
 
 exports.getThreads =(req,res) => {
@@ -34,7 +35,8 @@ exports.createThread = (req,res) => {
         _id: shortid.generate(),
         forum: req.body.forum,
         title: req.body.title,
-        deleteThread: req.body.deleteThread
+        deleteThread: req.body.deleteThread,
+        posts: []
     })
 
     thread.save()
@@ -58,5 +60,49 @@ exports.getOneThread = (req,res) => {
             console.log(thread)
             res.json(thread)})
         .catch(err => console.log(err))
-    // res.send('hit')
+}
+
+exports.deleteThread = (req,res) => {
+    
+
+    Thread.findOne({_id:req.params.thread})
+        .then(response => {
+            if (bcrypt.compareSync(req.body.deleteThread, response.deleteThread)) {
+                Thread.deleteOne({_id:req.params.thread})
+                    .then(response => {
+                    console.log(response);
+                    res.json('success')
+                    })
+                    .catch(err => res.json('error', err))
+            } else {
+                res.json('incorrect')
+            }
+            
+        })
+        .catch(err => res.json(err))
+  
+}
+
+exports.createPost = (req,res) => {
+    console.log(req.params)
+    console.log(req.body)
+
+    let newPost = {
+        _id: shortid.generate(),
+        content: req.body.content,
+        deletePass: req.body.deletePass,
+        likes: 0,
+        created_on: new Date(),
+        replies: []
+    }
+
+    Thread.findOne({_id: req.params.thread})
+        .then(thread => {
+            console.log(thread)
+
+            thread.posts.unshift(newPost)
+
+            thread.save().then(data => res.json(data)).catch(err => res.json(err))
+        })
+        .catch(err => res.json(err))
 }
