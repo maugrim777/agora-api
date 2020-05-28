@@ -106,3 +106,52 @@ exports.createPost = (req,res) => {
         })
         .catch(err => res.json(err))
 }
+
+exports.createReply = (req,res) => {
+    console.log(req.params)
+    console.log(req.body)
+
+    let newReply = {
+        _id: shortid.generate(),
+        content: req.body.content,
+        delPass: req.body.deletePass,
+        created_on: new Date(),
+    }
+
+    console.log(newReply)
+    Thread.findOne({_id:req.params.thread})
+        .then(thread => {
+            // console.log(thread)
+
+            thread.posts = thread.posts.map((post) => {
+                if (post._id === req.body.postID) {
+                    post.replies.unshift(newReply)
+                }
+
+                return post
+            })
+
+            thread.save().then(data => res.json(data)).catch(err => res.json(err))
+            
+            
+        })
+        .catch(err => res.json(err))
+
+    // res.send('hit backend')
+}
+
+exports.getPost = (req, res) => {
+    // console.log(req.params)
+
+    Thread.findOne({_id: req.params.thread})
+        .then(thread => {
+            if (!thread) {
+                res.json('thread not found')
+            } else {
+                let response = thread.posts.filter((post) => post._id === req.params.post)
+                if (!response) {res.json('post not found')
+                } else {res.json({response: response, thread: thread})}
+            }
+        })
+        .catch(err => res.json(err))
+}

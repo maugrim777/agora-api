@@ -12,7 +12,7 @@ const threadSchema = mongoose.Schema({
         deletePass: String,
         likes: Number,
         created_on: Date,
-        replies: [{_id:String, content: String, delPass: String}] 
+        replies: [{_id:String, content: String, delPass: String, created_on: Date}] 
     }]
 
 }, {
