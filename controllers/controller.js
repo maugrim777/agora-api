@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs')
 exports.getThreads =(req,res) => {
     const forum = req.path.slice(1, req.path.length-11)
     console.log(forum)
-    Thread.find({forum:forum}, {title:1, _id:1})
+    Thread.find({forum:forum}, {title:1, _id:1}).sort('-createdAt')
         .then(threads => {
             console.log('The threads are: ',threads)
             res.json(threads)
