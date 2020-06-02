@@ -38,6 +38,8 @@ app.post('/public/:thread/newReply', Controller.createReply)
 
 app.get('/public/:thread/:post', Controller.getPost)
 
+app.delete('/public/:thread/:post/delete', Controller.deletePost)
+
 
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))

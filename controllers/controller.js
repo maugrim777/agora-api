@@ -5,20 +5,16 @@ const bcrypt = require('bcryptjs')
 
 exports.getThreads =(req,res) => {
     const forum = req.path.slice(1, req.path.length-11)
-    console.log(forum)
     Thread.find({forum:forum}, {title:1, _id:1}).sort('-createdAt')
         .then(threads => {
-            console.log('The threads are: ',threads)
             res.json(threads)
         })
         .catch(err => {
-            console.log('There was an error: ', err)
             res.send(err)
         })
 }
 
 exports.createThread = (req,res) => {
-    console.log(req.body)
     if(!req.body.title) {
         return res.status(400).send({
             message: "Thread title can not be empty"
@@ -51,13 +47,10 @@ exports.createThread = (req,res) => {
 }
 
 exports.getOneThread = (req,res) => {
-    console.log(req.params.thread)
     threadID = req.params.thread
-    console.log(req.params)
 
     Thread.findOne({_id:threadID})
         .then(thread => {
-            console.log(thread)
             res.json(thread)})
         .catch(err => console.log(err))
 }
@@ -84,8 +77,6 @@ exports.deleteThread = (req,res) => {
 }
 
 exports.createPost = (req,res) => {
-    console.log(req.params)
-    console.log(req.body)
 
     let newPost = {
         _id: shortid.generate(),
@@ -98,7 +89,6 @@ exports.createPost = (req,res) => {
 
     Thread.findOne({_id: req.params.thread})
         .then(thread => {
-            console.log(thread)
 
             thread.posts.unshift(newPost)
 
@@ -108,8 +98,7 @@ exports.createPost = (req,res) => {
 }
 
 exports.createReply = (req,res) => {
-    console.log(req.params)
-    console.log(req.body)
+   
 
     let newReply = {
         _id: shortid.generate(),
@@ -118,10 +107,8 @@ exports.createReply = (req,res) => {
         created_on: new Date(),
     }
 
-    console.log(newReply)
     Thread.findOne({_id:req.params.thread})
         .then(thread => {
-            // console.log(thread)
 
             thread.posts = thread.posts.map((post) => {
                 if (post._id === req.body.postID) {
@@ -141,7 +128,6 @@ exports.createReply = (req,res) => {
 }
 
 exports.getPost = (req, res) => {
-    // console.log(req.params)
 
     Thread.findOne({_id: req.params.thread})
         .then(thread => {
@@ -154,4 +140,42 @@ exports.getPost = (req, res) => {
             }
         })
         .catch(err => res.json(err))
+}
+
+
+exports.deletePost = (req,res) => {
+    console.log('hit good')
+    console.log(req.params)
+
+    console.log(req.body)
+
+    // res.send('bau')
+
+    Thread.findOne({_id:req.params.thread})
+        .then(thread => {
+            console.log(thread)
+            let del = false
+            
+            thread.posts = thread.posts.filter((post,i) => {
+                if (post._id === req.params.post) {
+                    if (bcrypt.compareSync(req.body.deletePost, post.deletePass)) {
+                        console.log('match')
+                        del = true
+                    } else {
+                        return post
+                    }
+                } else {return post}
+            })
+              
+            if (del) {
+                thread.save().then(response => res.json(response)).catch(err => res.json(err))
+            } else {
+                res.json('incorrect password')
+            }
+            
+        })
+        .catch(err => res.send(err))
+
+    
+  
 }
